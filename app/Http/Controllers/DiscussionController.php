@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Discussion;
+use App\Http\Requests\StoreDiscussion;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
+use App\User;
 class DiscussionController extends Controller
 {
     
     public function index()
     {
-        //
+        $discussions =Discussion::with('user')->latest()->paginate(5);
+        return view('discussions.index',['discussions' =>$discussions]);
     }
 
    
@@ -19,18 +23,27 @@ class DiscussionController extends Controller
     }
 
    
-    public function store(Request $request)
+    public function store(StoreDiscussion $request)
     {
-        $data = $request->validate([
-            'title'   =>'required',
-            'content' =>'required'
+        /*
+        $validatedData = $request->validated();
+        $validatedData['channel_id'] = $request->channel;
+        Discussion::create($validatedData);
+        */
+        auth()->user()->discussions()->create([
+            'title'    =>$request->title,
+            'slug'  =>Str::slug($request->title),
+            'content'    =>$request->content,
+            'channel_id'    =>$request->channel,
         ]);
+        return redirect()->route('home')->with('success',"Discussion added");
     }
 
   
-    public function show($id)
+    public function show(Discussion $discussion)
     {
-        //
+        //$discussion = Discussion::findOrFail($discussion);
+        return view('discussions.show',['discussion'=>$discussion]);
     }
 
    
