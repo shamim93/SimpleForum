@@ -19,6 +19,7 @@
 
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        @stack('css')
     </head>
 
     <body>
@@ -105,6 +106,7 @@
             @endauth
 
         </div>
+        @stack('js')
     </body>
 
 </html>
